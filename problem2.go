@@ -58,34 +58,16 @@ func isSafe(levels []int) bool {
 	return true
 }
 
-func isSafeDampener(levels []int, dampenedCount int) bool {
-	// assuming at least 2 levels
-	firstDiff := levels[1] - levels[0]
-	var direction int
-	if firstDiff < 0 {
-		direction = -1
-	} else if firstDiff > 0 {
-		direction = 1
-	} else {
-		direction = 0
+func isSafeDampener(levels []int) bool {
+	if isSafe(levels) {
+		return true
 	}
 
-	if direction == 0 {
-		if dampenedCount > 1 {
-			return false
+	for i := 0; i < len(levels); i++ {
+		if isSafe(slices.Concat(levels[:i], levels[i+1:])) {
+			return true
 		}
-		return isSafeDampener(levels[1:], dampenedCount+1) || isSafeDampener(slices.Concat(levels[0:1], levels[2:]), dampenedCount+1)
 	}
 
-	for i := 1; i < len(levels); i++ {
-		diff := levels[i] - levels[i-1]
-		magnitude := diff * direction
-		if magnitude < 1 || magnitude > 3 {
-			if dampenedCount > 1 {
-				return false
-			}
-			return isSafeDampener(levels[i-1], dampenedCount+1) || isSafeDampener(slices.Concat(levels[0:1], levels[2:]), dampenedCount+1)
-		}
-	}
-	return true
+	return false
 }
